@@ -59,17 +59,21 @@ export default class Util{
 
         result.push(normX)
         result.push(normY)
+        // result.push(0.6)
         result.push(r)
+        result.push(hiddenVariables[0]/255);
+        result.push(0)
 
-        for (let i = 0; i < hiddenVariables.length; i++) {
-            if(i==0 || i==1){
-                result.push(hiddenVariables[i]/255);
+        // result.push(hiddenVariables[1]/255);
+        // for (let i = 0; i < hiddenVariables.length; i++) {
+        //     if(i==0 || i==1){
+        //         result.push(hiddenVariables[i]/255);
 
-            }else{
-                result.push(0);
+        //     }else{
+        //         result.push(0);
 
-            }
-        }
+        //     }
+        // }
 
         return result;
     }
