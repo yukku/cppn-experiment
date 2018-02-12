@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>cppn-experiment</title>
+    <meta name="viewport" content="width=device-width,height=device-height,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0">
+    <!-- android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <!-- iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Mustang Personaliser">
+
+    <style>
+        html, body, canvas {
+            margin: 0px;
+            padding: 0px;
+            overflow: hidden;
+        }
+        body{
+            margin: 0px;
+            padding:0;
+            overflow: hidden;
+            /*background: hsla(225, 42.7%, 20.0%, 1.0);*/
+            background: #1e1e1e;
+        }
+        canvas{
+            width: 300px;
+            height: 300px;
+        }
+    </style>
+
+</head>
+<body>
+
+    <script src="app.build.js"></script>
+
+    <script>
+
+        var app = new App();
+        document.body.appendChild(app.getCanvas2());
+        document.body.appendChild(app.getCanvas());
+
+
+     </script>
+
+
+</body>
+</html>

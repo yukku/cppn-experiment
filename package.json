@@ -1,0 +1,50 @@
+{
+    "name": "cppn-experiment",
+    "version": "1.0.0",
+    "description": "",
+    "main": "src/main.js",
+    "scripts": {
+        "build": "./node_modules/.bin/gulp build",
+        "serve": "./node_modules/.bin/gulp serve"
+    },
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "babel": "^6.23.0",
+        "babel-cli": "^6.26.0",
+        "babel-core": "^6.26.0",
+        "babel-loader": "^6.2.5",
+        "babel-plugin-add-module-exports": "^0.2.1",
+        "babel-preset-es2015": "^6.24.1",
+        "babelify": "^8.0.0",
+        "browser-sync": "^2.18.13",
+        "browserify": "^15.0.0",
+        "command-line-args": "^4.0.7",
+        "gulp": "^3.9.1",
+        "gulp-babel": "^7.0.0",
+        "gulp-concat": "^2.6.1",
+        "gulp-copy": "^1.0.1",
+        "gulp-glslify": "^0.1.0",
+        "gulp-rename": "^1.2.2",
+        "gulp-rollup": "^2.15.0",
+        "gulp-sourcemaps": "^2.6.1",
+        "gulp-template": "^4.0.0",
+        "gulp-uglify": "^3.0.0",
+        "gulp-uglifyes": "^0.1.2",
+        "gulp-util": "^3.0.8",
+        "gulp-watch": "^5.0.0",
+        "gulp-webpack": "^1.5.0",
+        "shader-reload": "^1.2.2",
+        "run-sequence": "^2.2.1",
+        "through2": "^2.0.3",
+        "vinyl-buffer": "^1.0.0",
+        "vinyl-source-stream": "^1.1.0",
+        "watchify": "^3.9.0"
+    },
+    "dependencies": {
+        "cppn": "^0.1.2-4",
+        "deeplearn": "^0.4.2",
+        "lodash": "^4.17.4",
+        "three": "^0.88.0"
+    }
+}
