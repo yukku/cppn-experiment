@@ -1,28 +1,52 @@
 import * as Deeplearn from 'deeplearn'
 
+
 export default class Util{
 
-    static createInput({ width, height, inputDimentionsNumber, hiddenVariablesNumber}) {
+    static getImage(url) {
+        return new Promise((resolve, reject) => {
+
+            const img = new Image();
+            img.onload = () => {
+                var canvas = document.createElement("canvas")
+                canvas.width = img.width
+                canvas.height = img.height
+                var ctx = canvas.getContext("2d")
+                ctx.drawImage(img, 0, 0, img.width, img.height)
+                var imageData = ctx.getImageData(0, 0, img.width, img.height)
+                resolve(imageData.data)
+            }
+            img.src = url;
+
+        })
+
+    }
+
+    static createInput({ buffer, width, height, inputDimentionsNumber, hiddenVariablesNumber}) {
+
 
         const coords = new Float32Array(width * height * (inputDimentionsNumber + hiddenVariablesNumber));
-
+        // console.log(coords);
         let pointer = 0;
         for (let d = 0; d < inputDimentionsNumber + hiddenVariablesNumber; d++) {
             for (let i = 0; i < width * height; i++) {
                 const x = i % width
                 const y = Math.floor(i / height)
-
-                // console.log(x);
-                // console.log(y);
-                const coord = this.normalizeCoord(x, y, width, height, hiddenVariablesNumber)
+                const coord = this.normalizeCoord(x, y, width, height, [
+                    buffer[i*4],
+                    buffer[i*4 + 1],
+                    buffer[i*4 + 2],
+                ])
+                // console.log(coord);
                 coords[pointer++] = coord[d]
             }
         }
 
+        // console.log(coords);
         return Deeplearn.Array2D.new([inputDimentionsNumber + hiddenVariablesNumber, width * height], coords)
     }
 
-    static normalizeCoord(x, y, width, height, hiddenVariablesNumber) {
+    static normalizeCoord(x, y, width, height, hiddenVariables) {
         const halfWidth = width * 0.5;
         const halfHeight = height * 0.5;
         const normX = (x - halfWidth) / width;
@@ -30,13 +54,23 @@ export default class Util{
 
         const r = Math.sqrt(normX * normX + normY * normY);
 
-        const result = [normX, normY, r];
+        const result = [];
 
         // Pad with zeros the number of latent terms, these get added on the GPU as
         // uniforms.
-        for (let i = 0; i < hiddenVariablesNumber; i++) {
-          result.push(0);
+        result.push(normX)
+        result.push(normY)
+        result.push(r)
+        for (let i = 0; i < hiddenVariables.length; i++) {
+            if(i==0){
+                result.push(hiddenVariables[i]/255);
+
+            }else{
+                result.push(0);
+
+            }
         }
+
         return result;
     }
 
@@ -112,36 +146,8 @@ export default class Util{
             texture2D(source, vec2(u, v[2])).r,
             texture2D(source, vec2(u, v[3])).r);
 
-          if (colorMode == 0) {
-            // RGB
-            gl_FragColor = vec4(values.rgb, 1.0);
-          } else if (colorMode == 1) {
-            // RGBA
-            gl_FragColor = values;
-          } else if (colorMode == 2) {
-            // HSV
-            vec3 rgb = hsv2rgb(values.rgb);
-            gl_FragColor = vec4(rgb, 1.0);
-          } else if (colorMode == 3) {
-            // HSVA
-            vec3 rgb = hsv2rgb(values.rgb);
-            gl_FragColor = vec4(rgb, values[3]);
-          } else if (colorMode == 4 || colorMode == 5) {
-            // YUV
-            values[0] = clamp(values[0], 0.2, 0.8);
-            values[1] = values[1] - 0.5;
-            values[2] = values[2] - 0.5;
-            vec3 rgb = yuv2rgb * values.rgb;
-            if (colorMode == 4) {
-              // YUV
-              gl_FragColor = vec4(rgb, 1.0);
-            } else if (colorMode == 5) {
-              // YUVA
-              gl_FragColor = vec4(rgb, values.a);
-            }
-          } else if (colorMode == 6) {
-            gl_FragColor = vec4(values[0], values[0], values[0], 1.0);
-          }
+          gl_FragColor = vec4(values.rgb, 1.0);
+
         }`;
 
       return gpgpu.createProgram(fragmentShaderSource);
@@ -153,8 +159,8 @@ export default class Util{
 
         const sourceSamplerLocation = Deeplearn.webgl_util.getProgramUniformLocationOrThrow(gpgpu.gl, renderShader, 'source');
         gpgpu.setInputMatrixTexture(sourceTex, sourceSamplerLocation, 0);
-        const colorModeLoc = gpgpu.getUniformLocation(renderShader, 'colorMode');
-        gpgpu.gl.uniform1i(colorModeLoc, colorMode);
+        // const colorModeLoc = gpgpu.getUniformLocation(renderShader, 'colorMode');
+        // gpgpu.gl.uniform1i(colorModeLoc, colorMode);
         const outputNumDimensionsLoc = gpgpu.getUniformLocation(renderShader, 'outputNumDimensions');
         gpgpu.gl.uniform1f(outputNumDimensionsLoc, outputNumDimensions);
         gpgpu.executeProgram();
@@ -166,29 +172,37 @@ export default class Util{
 
             const ctx = canvas.getContext('2d')
             const [height, width, depth] = array.shape
-            const imageData = new ImageData(width, height)
+            const imageData = new ImageData(width, height*depth)
+
+            canvas.width = width
+            canvas.height = height*depth/4
+
+            canvas.style.width = canvas.width*2 + "px"
+            canvas.style.height = canvas.height*2  + "px"
 
             array.data()
                 .then(data => {
-
-                    for (let i = 0; i < width * height; i++) {
-                        const j = i * 4
-                        const k = i * 3
-                        imageData.data[j + 0] = Math.round(255 * data[k + 0])
-                        imageData.data[j + 1] = Math.round(255 * data[k + 1])
-                        imageData.data[j + 2] = Math.round(255 * data[k + 2])
-                        imageData.data[j + 3] = 255
-                    }
-
-                    // for (let d = 0; d < depth; d++) {
-                    //     for (let i = 0; i < width * height; i++) {
-                    //         imageData.data[j + 0] = Math.round(255 * data[k + 0])
-                    //         imageData.data[j + 1] = Math.round(255 * data[k + 1])
-                    //         imageData.data[j + 2] = Math.round(255 * data[k + 2])
-                    //         imageData.data[j + 3] = 255
-
-                    //     }
+                    console.log(data);
+                    // for (let i = 0; i < width * height; i++) {
+                    //     const j = i * 4
+                    //     const k = i * 3
+                    //     imageData.data[j + 0] = Math.round(255 * data[k + 0])
+                    //     imageData.data[j + 1] = Math.round(255 * data[k + 1])
+                    //     imageData.data[j + 2] = Math.round(255 * data[k + 2])
+                    //     imageData.data[j + 3] = 255
                     // }
+
+                    for (let d = 0; d < depth; d++) {
+                        for (let i = 0; i < width * height; i++) {
+                            const j = i * 4 + width * height * d
+                            const k = i * 4 + width * height * d
+                            imageData.data[j + 0] = Math.round(255 * data[k + 0])
+                            imageData.data[j + 1] = Math.round(255 * data[k + 1])
+                            imageData.data[j + 2] = Math.round(255 * data[k + 2])
+                            imageData.data[j + 3] = 255
+
+                        }
+                    }
 
 
                     ctx.putImageData(imageData, 0, 0)
