@@ -22,7 +22,7 @@ export default class Util{
 
     }
 
-    static createInput({ buffer, width, height, inputDimentionsNumber, hiddenVariablesNumber}) {
+    static createInput({ buffer, buffer2, width, height, inputDimentionsNumber, hiddenVariablesNumber}) {
 
 
         const coords = new Float32Array(width * height * (inputDimentionsNumber + hiddenVariablesNumber));
@@ -34,8 +34,8 @@ export default class Util{
                 const y = Math.floor(i / height)
                 const coord = this.normalizeCoord(x, y, width, height, [
                     buffer[i*4],
-                    buffer[i*4 + 1],
-                    buffer[i*4 + 2],
+                    buffer2[i*4 + 1],
+                    buffer2[i*4 + 2],
                 ])
                 // console.log(coord);
                 coords[pointer++] = coord[d]
@@ -56,13 +56,13 @@ export default class Util{
 
         const result = [];
 
-        // Pad with zeros the number of latent terms, these get added on the GPU as
-        // uniforms.
+
         result.push(normX)
         result.push(normY)
         result.push(r)
+
         for (let i = 0; i < hiddenVariables.length; i++) {
-            if(i==0){
+            if(i==0 || i==1){
                 result.push(hiddenVariables[i]/255);
 
             }else{

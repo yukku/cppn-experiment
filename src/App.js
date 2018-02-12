@@ -10,7 +10,7 @@ export default class App{
         const HIDDEN_VARIABLES_NUMBER = 3 // r, g, b
         const MAT_WIDTH = 100
         const WEIGHTS_STDEV = 0.6
-        this.MAX_LAYERS = 10
+        this.MAX_LAYERS = 4
 
         this.canvas = document.createElement("canvas")
         this.canvas2 = document.createElement("canvas")
@@ -31,11 +31,20 @@ export default class App{
         this.math = new Deeplearn.NDArrayMath(this.backend, false)
         Deeplearn.ENV.setMath(this.math);
 
+        this.buffer = null
+        this.buffer2 = null
         Util.getImage("profile-22.jpg")
             .then(buffer => {
+                this.buffer = buffer
+                return Util.getImage("scarlett.jpg")
+            })
+            .then(buffer2 => {
+                this.buffer2 = buffer2
+
 
                 this.input = Util.createInput({
-                    buffer: buffer,
+                    buffer: this.buffer,
+                    buffer2: this.buffer2,
                     width: this.canvas.width,
                     height: this.canvas.height,
                     inputDimentionsNumber: INPUT_DIMENTIONS_NUMBER,
