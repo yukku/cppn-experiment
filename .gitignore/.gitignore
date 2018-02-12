@@ -1,0 +1,12 @@
+.ideas
+dist/app
+dist/shader_precompiled
+dist/packs
+dist/node_modules
+public
+shader_precompiled
+exported
+node_modules
+.idea/
+.idea/workspace.xml
+**/.DS_Store
