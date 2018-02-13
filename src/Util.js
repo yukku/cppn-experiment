@@ -60,9 +60,10 @@ export default class Util{
         result.push(normX)
         result.push(normY)
         // result.push(0.6)
-        result.push(r)
+        // result.push(r)
         result.push(hiddenVariables[0]/255);
-        result.push(0)
+        result.push(hiddenVariables[1]/255);
+        result.push(0.5)
 
         // result.push(hiddenVariables[1]/255);
         // for (let i = 0; i < hiddenVariables.length; i++) {
@@ -171,40 +172,34 @@ export default class Util{
     }
 
 
-    static renderToCanvas(array, canvas) {
+    static renderToCanvas(array, canvas, scale = 1) {
         return new Promise((resolve, reject) => {
 
             const ctx = canvas.getContext('2d')
-            const [height, width, depth] = array.shape
+            let [height, width, depth] = array.shape
+            depth = (depth) ? depth : 1
             const imageData = new ImageData(width, height*depth)
 
             canvas.width = width
-            canvas.height = height*depth/4
 
-            canvas.style.width = canvas.width*2 + "px"
-            canvas.style.height = canvas.height*2  + "px"
+            canvas.height = height*depth
+
+            canvas.style.width = canvas.width * scale + "px"
+            canvas.style.height = canvas.height * scale + "px"
 
             array.data()
                 .then(data => {
-                    console.log(data);
-                    // for (let i = 0; i < width * height; i++) {
-                    //     const j = i * 4
-                    //     const k = i * 3
-                    //     imageData.data[j + 0] = Math.round(255 * data[k + 0])
-                    //     imageData.data[j + 1] = Math.round(255 * data[k + 1])
-                    //     imageData.data[j + 2] = Math.round(255 * data[k + 2])
-                    //     imageData.data[j + 3] = 255
-                    // }
 
+                    let pt = 0
                     for (let d = 0; d < depth; d++) {
                         for (let i = 0; i < width * height; i++) {
-                            const j = i * 4 + width * height * d
-                            const k = i * 4 + width * height * d
-                            imageData.data[j + 0] = Math.round(255 * data[k + 0])
-                            imageData.data[j + 1] = Math.round(255 * data[k + 1])
-                            imageData.data[j + 2] = Math.round(255 * data[k + 2])
+                            const j = pt * 4
+                            const k = pt
+                            imageData.data[j + 0] = Math.round(255 * data[k])
+                            imageData.data[j + 1] = Math.round(255 * data[k])
+                            imageData.data[j + 2] = Math.round(255 * data[k])
                             imageData.data[j + 3] = 255
-
+                            pt++
                         }
                     }
 
