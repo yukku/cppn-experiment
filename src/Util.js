@@ -59,10 +59,12 @@ export default class Util{
 
         result.push(normX)
         result.push(normY)
-        // result.push(0.6)
+
+
         // result.push(r)
+        result.push(0.6)
         result.push(hiddenVariables[0]/255);
-        result.push(hiddenVariables[1]/255);
+        // result.push(hiddenVariables[1]/255);
         result.push(0.5)
 
         // result.push(hiddenVariables[1]/255);

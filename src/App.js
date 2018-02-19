@@ -8,9 +8,9 @@ export default class App{
 
         const INPUT_DIMENTIONS_NUMBER = 3  // x, y, r
         const HIDDEN_VARIABLES_NUMBER = 2 // w
-        this.MAT_WIDTH = 100
-        const WEIGHTS_STDEV = 0.16
-        this.MAX_LAYERS = 50
+        this.MAT_WIDTH = 50
+        const WEIGHTS_STDEV = 0.28
+        this.MAX_LAYERS = 20
 
         this.canvas = document.createElement("canvas")
         this.canvas2 = document.createElement("canvas")
@@ -24,7 +24,8 @@ export default class App{
         this.canvas.height = canvasSize
         // this.canvas.style.width = canvasSize*4 + "px"
         // this.canvas.style.height = canvasSize*4  + "px"
-
+        this.canvas.style.width = 100 + "%"
+        this.canvas.style.height = 100  + "%"
 
         this.gpgpu = new Deeplearn.GPGPUContext(gl)
         this.backend = new Deeplearn.MathBackendWebGL(this.gpgpu)
@@ -68,7 +69,7 @@ export default class App{
                       [this.MAT_WIDTH, this.MAT_WIDTH], 0, WEIGHTS_STDEV));
                 }
 
-                console.log(this.weights[1].shape);
+                // console.log(this.weights[1].shape);
 
                 this.weights.push(Deeplearn.Array2D.randTruncatedNormal(
                     [3 /** max output channels */, this.MAT_WIDTH], 0, WEIGHTS_STDEV));
@@ -96,11 +97,12 @@ export default class App{
 
     getOutput(prevOutput) {
 
-        this.z1Counter += 0.01
+        this.z1Counter += 0.007
         this.z2Counter += 0.01
 
         const z1 = Math.sin(this.z1Counter)
         const z2 = Math.cos(this.z2Counter)
+
         const inputWithLatentVariables = Deeplearn.NDArray.make(this.input.shape, {})
 
         Util.addLatentVariables(
@@ -116,7 +118,7 @@ export default class App{
         let lastOutput = inputWithLatentVariables;
         // console.log(lastOutput);
         // console.log(this.math);
-        // this.math.scope(() => {
+        this.math.scope(() => {
         // console.log(Deeplearn);
         // Deeplearn.tidy(keep => {
 
@@ -129,14 +131,22 @@ export default class App{
                 //             this.canvas.height,
                 //             this.canvas.width,
                 //             this.MAT_WIDTH,
-                //         ]), this.canvas2, 3)
+                //         ]), this.canvas2, 1)
 
                 // console.log(matmulResult.dataSync());
-                lastOutput = (i === this.MAX_LAYERS - 1) ?
-                this.math.sigmoid(matmulResult) :
-                // this.math.relu(matmulResult) :
-                // this.math.selu(matmulResult) :
-                this.math.tanh(matmulResult)
+
+                if(i === this.MAX_LAYERS - 1) {
+                    lastOutput = this.math.sigmoid(matmulResult)
+                }else if(i%2){
+                    lastOutput = this.math.relu(matmulResult)
+                }else{
+                    lastOutput = this.math.tanh(matmulResult)
+                }
+                // lastOutput = (i === this.MAX_LAYERS - 1) ?
+                // this.math.sigmoid(matmulResult) :
+                // // this.math.relu(matmulResult) :
+                // // this.math.selu(matmulResult) :
+                // this.math.tanh(matmulResult)
             }
 
             Util.render(
@@ -146,10 +156,10 @@ export default class App{
                 3,
                 0
             )
-        // });
+        });
 
         inputWithLatentVariables.dispose();
-        // requestAnimationFrame(() => this.getOutput(lastOutput));
+        requestAnimationFrame(() => this.getOutput(lastOutput));
 
     }
 
