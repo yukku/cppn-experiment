@@ -22,7 +22,7 @@ export default class Util{
 
     }
 
-    static createInput({ buffer, buffer2, width, height, inputDimentionsNumber, hiddenVariablesNumber}) {
+    static createInput({ buffer, width, height, inputDimentionsNumber, hiddenVariablesNumber}) {
 
 
         const coords = new Float32Array(width * height * (inputDimentionsNumber + hiddenVariablesNumber));
@@ -34,8 +34,8 @@ export default class Util{
                 const y = Math.floor(i / height)
                 const coord = this.normalizeCoord(x, y, width, height, [
                     buffer[i*4],
-                    buffer2[i*4 + 1],
-                    buffer2[i*4 + 2],
+                    buffer[i*4 + 1],
+                    buffer[i*4 + 2],
                 ])
                 // console.log(coord);
                 coords[pointer++] = coord[d]
@@ -207,7 +207,7 @@ export default class Util{
 
 
                     ctx.putImageData(imageData, 0, 0)
-                    resolve()
+                    resolve(imageData)
                 })
         })
 

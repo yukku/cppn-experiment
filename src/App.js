@@ -90,10 +90,36 @@ export default class App{
 
                 // // this.update()
                 this.getOutput()
-
+                // this.setupSession()
             })
 
     }
+
+    // createFullyConnectedLayer( graph, inputLayer, layerIndex, units, activationFunction ) {
+    //     return graph.layers.dense('fully_connected_' + layerIndex, inputLayer, units, activationFunction ? activationFunction : (x) => graph.relu(x) );
+    //   }
+
+    // setupSession() {
+    //     const graph = new Deeplearn.Graph()
+
+    //     const initialLearningRate = 0.06
+
+    //     this.optimizer = new SGDOptimizer(initialLearningRate)
+
+    //     this.inputTensor = graph.placeholder('input RGB value', [3])
+    //     this.targetTensor = graph.placeholder('output classifier', [2])
+
+    //     let connectedLayer = this.createConnectedLayer(graph, this.inputTensor, 0, 64)
+    //     connectedLayer = this.createConnectedLayer(graph, connectedLayer, 1, 32)
+    //     connectedLayer = this.createConnectedLayer(graph, connectedLayer, 2, 16)
+
+    //     this.predictionTensor = this.createConnectedLayer(graph, connectedLayer, 3, 2)
+    //     this.costTensor = graph.meanSquaredCost(this.targetTensor, this.predictionTensor)
+
+    //     this.session = new Session(graph, math)
+
+    //  }
+
 
     getOutput(prevOutput) {
 
@@ -114,10 +140,12 @@ export default class App{
             z1,
             z2
         )
-
         let lastOutput = inputWithLatentVariables;
         // console.log(lastOutput);
         // console.log(this.math);
+        //
+        console.log(inputWithLatentVariables)
+        console.log(this.weights[0])
         this.math.scope(() => {
         // console.log(Deeplearn);
         // Deeplearn.tidy(keep => {
@@ -126,7 +154,7 @@ export default class App{
 
 
                 const matmulResult = this.math.matMul(this.weights[i], lastOutput);
-
+                // console.log(matmulResult)
                 // Util.renderToCanvas(matmulResult.reshape([
                 //             this.canvas.height,
                 //             this.canvas.width,
