@@ -6,8 +6,9 @@ const weights = [];
 const INPUT_DIMENSIONS_NUMBER = 3  // x, y, r
 const HIDDEN_VARIABLES_NUMBER = 1 // w
 const MAT_WIDTH = 10
-const WEIGHTS_STDEV = 0.6
-const MAX_LAYERS = 6
+// const WEIGHTS_STDEV = 1 / Math.sqrt(100 * 100)
+const WEIGHTS_STDEV = 0.1
+const MAX_LAYERS = 1
 
 weights.push(Deeplearn.variable(Deeplearn.truncatedNormal(
     [INPUT_DIMENSIONS_NUMBER + HIDDEN_VARIABLES_NUMBER, MAT_WIDTH], 0, WEIGHTS_STDEV)));
