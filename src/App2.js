@@ -8,9 +8,9 @@ export default class App{
 
         this.INPUT_DIMENSIONS_NUMBER = 3  // x, y, r
         this.HIDDEN_VARIABLES_NUMBER = 6 // w
-        this.MAT_WIDTH = 10
-        const WEIGHTS_STDEV = 0.8
-        this.MAX_LAYERS = 2
+        this.MAT_WIDTH = 20
+        const WEIGHTS_STDEV = 0.34
+        this.MAX_LAYERS = 50
 
         this.canvas = document.createElement("canvas")
 
@@ -19,8 +19,8 @@ export default class App{
         this.canvas.height = canvasSize
         // this.canvas.style.width = canvasSize*4 + "px"
         // this.canvas.style.height = canvasSize*4  + "px"
-        this.canvas.style.width = 100 + "%"
-        this.canvas.style.height = 100  + "%"
+        // this.canvas.style.width = 100 + "%"
+        // this.canvas.style.height = 100  + "%"
 
 
         this.buffer = null
@@ -54,7 +54,7 @@ export default class App{
         this.z1Counter = 0
         this.z2Counter = 0
 
-        Util.getImage("scarlett.jpg")
+        Util.getImage("profile-22.jpg")
             .then(buffer => {
                 this.getOutput(Util.getImageNorm(buffer))
             })
@@ -65,7 +65,7 @@ export default class App{
 
 
     getOutput(prevOutput) {
-
+        // console.log(prevOutput)
         // var prevTensor = Deeplearn.Array2D.new([4, this.canvas.width * this.canvas.height], prevOutput)
 
         // let reshaped = prevTensor.reshape([
@@ -98,20 +98,24 @@ export default class App{
 
 
             var lastOutput = this.input.concat(prevTensor);
-
-            for (var i = 0; i < this.weights.length; i++) {
+            console.log(lastOutput)
+            console.log(this.weights[0])
+             for (var i = 0; i < this.weights.length; i++) {
 
                 const matmulResult = this.weights[i].matMul(lastOutput);
 
-
+                console.log(matmulResult)
 
                 if(i === this.weights.length - 1) {
+
                     lastOutput = matmulResult.sigmoid()
+
+
                 }else if(i%2){
-                    lastOutput = matmulResult.relu()
-                    // lastOutput = matmulResult.tanh()
+                    // lastOutput = matmulResult.relu()
+                    lastOutput = matmulResult.tanh()
                 }else{
-                    lastOutput = matmulResult.relu()
+                    lastOutput = matmulResult.tanh()
                 }
             }
 
@@ -122,12 +126,12 @@ export default class App{
         });
 
         let reshaped = lastOutput.reshape([
-            this.canvas.height,
-            this.canvas.width,
+            this.canvas.height ,
+            this.canvas.width  ,
             4
         ])
 
-        Util.renderToCanvas(reshaped, this.canvas, 4)
+        Util.renderToCanvas(reshaped, this.canvas, 2)
             .then((imageData) => {
                 const normImageData = Util.getImageNorm(imageData.data)
                 setTimeout(() => {

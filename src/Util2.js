@@ -76,7 +76,7 @@ export default class Util{
                         for (let i = 0; i < width * height; i++) {
 
                             if(d < depth - 1) {
-                                imageData.data[i * depth + d] = Math.round(255 * data[i + d * width * height])
+                                imageData.data[i * depth + d] = Math.round(255 * 10 * data[i + d * width * height])
                             }else{
                                 imageData.data[i * depth + d] = 255
                             }
