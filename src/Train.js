@@ -10,44 +10,44 @@ export default class App{
 
         this.weights = Deeplearn.variable( Deeplearn.randomNormal([ 100 * 100, 4], 0, 1 / Math.sqrt(100 * 100)));
 
-        const labels = Deeplearn.Array2D.ones([4, 4])
+        let labels = Deeplearn.Array2D.ones([100 * 100, 4])
         // console.log(labels.dataSync())
         Util.getImage("profile-22.jpg")
             .then(buffer => {
 
-                var imageTensor = Deeplearn.Array2D.new([4, 100 * 100], Util.getImageNorm(buffer))
+                var imageTensor = Deeplearn.Array2D.new([100 * 100, 4], Util.getImageNorm(buffer))
 
                 this.train(labels, imageTensor)
                     .then(() => {
 
-                        this.test()
+                        // this.test()
 
                     })
             })
 
     }
 
-    test() {
+    // test() {
 
-        Util.getImage("profile-22.jpg")
-            .then(buffer => {
-                const imageTensor = Deeplearn.Array2D.new([4, 100 * 100], Util.getImageNorm(buffer))
-                const score = this.predict(imageTensor)
-                console.log("true result: ", score)
-            })
+    //     Util.getImage("profile-22.jpg")
+    //         .then(buffer => {
+    //             const imageTensor = Deeplearn.Array2D.new([4, 100 * 100], Util.getImageNorm(buffer))
+    //             const score = this.predict(imageTensor)
+    //             console.log("true result: ", score)
+    //         })
 
-        Util.getImage("scarlett.jpg")
-            .then(buffer => {
-                const imageTensor = Deeplearn.Array2D.new([4, 100 * 100], Util.getImageNorm(buffer))
-                const score = this.predict(imageTensor)
-                console.log("false result: ", score)
-            })
-    }
+    //     Util.getImage("scarlett.jpg")
+    //         .then(buffer => {
+    //             const imageTensor = Deeplearn.Array2D.new([4, 100 * 100], Util.getImageNorm(buffer))
+    //             const score = this.predict(imageTensor)
+    //             console.log("false result: ", score)
+    //         })
+    // }
 
     async train(labels, imageTensor) {
 
 
-        const TRAIN_STEPS = 500
+        const TRAIN_STEPS = 100
         const LEARNING_RATE = 0.0001
         const optimizer = Deeplearn.train.sgd(LEARNING_RATE)
 
@@ -55,24 +55,25 @@ export default class App{
 
             const cost = optimizer.minimize(() => {
 
-                const mulResult = Model.model(imageTensor)
-                return Deeplearn.losses.softmaxCrossEntropy(labels, mulResult).mean()
+                 return Deeplearn.losses.softmaxCrossEntropy(labels, Model.model(imageTensor)).mean()
             }, true);
             console.log("cost: " + cost.dataSync())
 
-            let reshaped = this.weights.reshape([
-                100,
-                100,
-                4
-            ])
 
-            Util.renderToCanvas(reshaped, this.canvas, 6)
 
             await Deeplearn.nextFrame();
 
         }
 
-        console.log(this.weights.dataSync())
+        let reshaped = this.weights.reshape([
+            100,
+            100,
+            4
+        ])
+
+        Util.renderToCanvas(reshaped, this.canvas, 6)
+
+        // console.log(this.weights.dataSync())
     }
 
     predict(imageTensor) {
