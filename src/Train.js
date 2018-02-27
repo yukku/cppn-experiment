@@ -17,7 +17,7 @@ export default class Train{
         Util.getImage("profile-22.jpg")
             .then(buffer => {
 
-                var imageTensor = Deeplearn.Array2D.new([100 * 100, 4], Util.getImageNorm(buffer))
+                var imageTensor = Deeplearn.Array2D.new([100 * 100, 4], Util.getImageNorm(buffer, 100, 100))
 
                 this.train(labels, imageTensor)
                     .then(() => {
@@ -35,7 +35,7 @@ export default class Train{
 
         Util.getImage("profile-22.jpg")
             .then(buffer => {
-                const imageTensor = Deeplearn.Array2D.new([100 * 100, 4], Util.getImageNorm(buffer))
+                const imageTensor = Deeplearn.Array2D.new([100 * 100, 4], Util.getImageNorm(buffer, 100, 100))
                 const score = this.predict(imageTensor)
                 console.log("true result: ", Array.from(score.dataSync()))
 
@@ -68,14 +68,19 @@ export default class Train{
 
     async train(labels, imageTensor) {
 
-        const TRAIN_STEPS = 10
-        const LEARNING_RATE = 0.00001
+        const TRAIN_STEPS = 1000
+        const LEARNING_RATE = 0.0000000001
         const optimizer = Deeplearn.train.sgd(LEARNING_RATE)
+        // const optimizer = Deeplearn.train.momentum(LEARNING_RATE)
+        // const optimizer = Deeplearn.train.adadelta(LEARNING_RATE)
+        // const optimizer = Deeplearn.train.adam(LEARNING_RATE)
+        // const optimizer = Deeplearn.train.adamax(LEARNING_RATE) //
+        // const optimizer = Deeplearn.train.rmsprop(LEARNING_RATE)
+        // const optimizer = Deeplearn.train.adagrad(LEARNING_RATE)
 
         for (let i = 0; i < TRAIN_STEPS; i++) {
 
             const cost = optimizer.minimize(() => {
-
                  return Deeplearn.losses.softmaxCrossEntropy(labels, Model.model(imageTensor)).mean()
             }, true);
             console.log("cost: " + cost.dataSync())

@@ -41,12 +41,11 @@ export default class Util{
         const normY = (y - halfHeight) / height;
         const r = Math.sqrt(normX * normX + normY * normY);
         return [normX, normY, r] ;
+        // return [normX, normY, r] ;
     }
 
-    static getImageNorm(image) {
+    static getImageNorm(image, width, height) {
         const coords = new Float32Array(image.length);
-        const width = 100
-        const height = 100
         const dimension = 4
 
         for (let d = 0; d < dimension; d++) {
