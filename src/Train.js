@@ -2,8 +2,9 @@
 import * as Deeplearn from "deeplearn"
 import Util from "./Util2.js"
 import Model from "./Model.js"
+import App from "./App2.js"
 
-export default class App{
+export default class Train{
 
     constructor() {
         this.canvas = document.createElement("canvas")
@@ -21,7 +22,9 @@ export default class App{
                 this.train(labels, imageTensor)
                     .then(() => {
 
-                        this.test()
+
+                        const app = new App(this.canvas)
+                        // this.test()
 
                     })
             })
@@ -36,38 +39,37 @@ export default class App{
                 const score = this.predict(imageTensor)
                 console.log("true result: ", Array.from(score.dataSync()))
 
-                // let reshaped = score.reshape([
-                //     100,
-                //     100,
-                //     1
-                // ])
+                let reshaped = score.reshape([
+                    100,
+                    100,
+                    1
+                ])
 
-                // Util.renderToCanvas(reshaped, this.canvas, 3)
+                Util.renderToCanvas(reshaped, this.canvas, 3)
 
 
             })
 
-        Util.getImage("scarlett.jpg")
-            .then(buffer => {
-                const imageTensor = Deeplearn.Array2D.new([100 * 100, 4], Util.getImageNorm(buffer))
-                const score = this.predict(imageTensor)
-                console.log("false result: ", Array.from(score.dataSync()))
+        // Util.getImage("scarlett.jpg")
+        //     .then(buffer => {
+        //         const imageTensor = Deeplearn.Array2D.new([100 * 100, 4], Util.getImageNorm(buffer))
+        //         const score = this.predict(imageTensor)
+        //         console.log("false result: ", Array.from(score.dataSync()))
 
-                // let reshaped = score.reshape([
-                //     100,
-                //     100,
-                //     1
-                // ])
+        //         // let reshaped = score.reshape([
+        //         //     100,
+        //         //     100,
+        //         //     1
+        //         // ])
 
-                // Util.renderToCanvas(reshaped, this.canvas2, 3)
-            })
+        //         // Util.renderToCanvas(reshaped, this.canvas2, 3)
+        //     })
     }
 
     async train(labels, imageTensor) {
 
-
-        const TRAIN_STEPS = 100
-        const LEARNING_RATE = 0.0001
+        const TRAIN_STEPS = 10
+        const LEARNING_RATE = 0.00001
         const optimizer = Deeplearn.train.sgd(LEARNING_RATE)
 
         for (let i = 0; i < TRAIN_STEPS; i++) {
@@ -77,9 +79,6 @@ export default class App{
                  return Deeplearn.losses.softmaxCrossEntropy(labels, Model.model(imageTensor)).mean()
             }, true);
             console.log("cost: " + cost.dataSync())
-
-
-
             await Deeplearn.nextFrame();
 
         }

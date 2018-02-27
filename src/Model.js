@@ -5,19 +5,19 @@ import * as Deeplearn from "deeplearn"
 const weights = [];
 const INPUT_DIMENSIONS_NUMBER = 3  // x, y, r
 const HIDDEN_VARIABLES_NUMBER = 1 // w
-const MAT_WIDTH = 10
+const MAT_WIDTH = 100
 // const WEIGHTS_STDEV = 1 / Math.sqrt(100 * 100)
-const WEIGHTS_STDEV = 0.1
-const MAX_LAYERS = 1
+const WEIGHTS_STDEV = 0.3
+const MAX_LAYERS = 6
 
-weights.push(Deeplearn.variable(Deeplearn.truncatedNormal(
+weights.push(Deeplearn.variable(Deeplearn.randomNormal(
     [INPUT_DIMENSIONS_NUMBER + HIDDEN_VARIABLES_NUMBER, MAT_WIDTH], 0, WEIGHTS_STDEV)));
 for (let i = 0; i < MAX_LAYERS; i++) {
-  weights.push(Deeplearn.variable(Deeplearn.truncatedNormal(
+  weights.push(Deeplearn.variable(Deeplearn.randomNormal(
       [MAT_WIDTH, MAT_WIDTH], 0, WEIGHTS_STDEV)));
 }
 weights.push(Deeplearn.variable(Deeplearn.Array2D.randTruncatedNormal(
-    [ MAT_WIDTH, 4], 0, WEIGHTS_STDEV)));
+    [MAT_WIDTH, 4], 0, WEIGHTS_STDEV)));
 
 
 export default class Model{
@@ -28,6 +28,10 @@ export default class Model{
             lastOutput = lastOutput.matMul(weights[i])
         }
         return lastOutput
+    }
+
+    static getWeight() {
+        return weights
     }
 
 }

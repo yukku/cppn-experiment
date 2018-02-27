@@ -22,8 +22,8 @@ export default class Util{
     static createInput({ buffer, width, height, inputDimensionsNumber}) {
         const coords = new Float32Array(width * height * inputDimensionsNumber);
         let pointer = 0;
-        for (let d = 0; d < inputDimensionsNumber; d++) {
-            for (let i = 0; i < width * height; i++) {
+        for (let i = 0; i < width * height; i++) {
+            for (let d = 0; d < inputDimensionsNumber; d++) {
                 const x = i % width
                 const y = Math.floor(i / height)
                 const coord = this.normalizeCoord(x, y, width, height)
@@ -31,7 +31,7 @@ export default class Util{
             }
         }
 
-        return Deeplearn.Array2D.new([inputDimensionsNumber, width * height], coords)
+        return Deeplearn.Array2D.new([width * height, inputDimensionsNumber], coords)
     }
 
     static normalizeCoord(x, y, width, height) {
@@ -58,7 +58,6 @@ export default class Util{
         return coords
     }
 
-
     static renderToCanvas(array, canvas, scale = 1) {
         return new Promise((resolve, reject) => {
 
@@ -75,11 +74,7 @@ export default class Util{
                     for (let d = 0; d < depth; d++) {
                         for (let i = 0; i < width * height; i++) {
 
-                            if(d < depth - 1) {
-                                imageData.data[i * depth + d] = Math.round(255 * data[i + d * width * height])
-                            }else{
-                                imageData.data[i * depth + d] = 255
-                            }
+                            imageData.data[i + d * width * height]= Math.round(255 * data[i + d * width * height])
 
                         }
                    }
@@ -90,6 +85,49 @@ export default class Util{
         })
 
     }
+
+
+    // static renderToCanvas(array, canvas, scale = 1) {
+    //     return new Promise((resolve, reject) => {
+
+    //         const ctx = canvas.getContext('2d')
+    //         let [height, width, depth] = array.shape
+    //         depth = (depth) ? depth : 1
+    //         const imageData = new ImageData(width, height)
+    //         canvas.style.width = canvas.width * scale + "px"
+    //         canvas.style.height = canvas.height * scale + "px"
+
+    //         array.data()
+    //             .then(data => {
+
+    //                 for (let d = 0; d < depth; d++) {
+    //                     for (let i = 0; i < width * height; i++) {
+
+    //                         if(d < depth - 1) {
+    //                             imageData.data[i * depth + d] = Math.round(255 * data[i + d * width * height])
+    //                         }else{
+    //                             imageData.data[i * depth + d] = 255
+    //                         }
+
+    //                     }
+    //                }
+
+    //                // for (let i = 0; i < height * width; ++i) {
+    //                //     const j = i * 4;
+    //                //     const k = i * 3;
+    //                //     imageData.data[j + 0] = Math.round(255 * data[k + 0]);
+    //                //     imageData.data[j + 1] = Math.round(255 * data[k + 1]);
+    //                //     imageData.data[j + 2] = Math.round(255 * data[k + 2]);
+    //                //     imageData.data[j + 3] = 255;
+    //                // }
+
+
+    //                 ctx.putImageData(imageData, 0, 0)
+    //                 resolve(imageData)
+    //             })
+    //     })
+
+    // }
 
 
     static renderAllToCanvas(array, canvas, scale = 1) {
