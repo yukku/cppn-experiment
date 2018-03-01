@@ -12,7 +12,7 @@ export default class App{
 
         this.canvas = canvas || document.createElement("canvas")
 
-        const canvasSize = 400
+        const canvasSize = 500
         this.canvas.width = canvasSize
         this.canvas.height = canvasSize
         // this.canvas.style.width = canvasSize*4 + "px"
@@ -63,16 +63,7 @@ export default class App{
             var z2Mat = z2.mul(this.ones);
             var concatAxis = 1;
             var latentVars = z1Mat.concat(z2Mat, 1);
-
-            var prevTensor
-            // if(prevOutput){
-            //     prevTensor = Deeplearn.Array2D.new([this.canvas.width * this.canvas.height, 4], prevOutput)
-            // }else{
-            //     prevTensor = this.input.concat(latentVars, 1);
-            // }
-            prevTensor = this.input.concat(latentVars, 1);
-
-            var lastOutput = prevTensor
+            var lastOutput = this.input.concat(latentVars, 1);
 
              for (var i = 0; i < this.weights.length; i++) {
 
@@ -82,9 +73,11 @@ export default class App{
                     lastOutput = matmulResult.sigmoid()
                 }else if(i%2){
                     // lastOutput = matmulResult.relu()
-                    lastOutput = matmulResult.relu()
+                    // lastOutput = matmulResult.relu()
+                    lastOutput = matmulResult.tanh()
                 }else{
                     lastOutput = matmulResult.tanh()
+                    // lastOutput = matmulResult.selu()
                 }
             }
 
@@ -99,7 +92,7 @@ export default class App{
             this.canvas.width  ,
             4
         ])
-
+        // console.log(reshaped.dataSync())
         Util.renderToCanvas(reshaped, this.canvas, 1)
             .then((imageData) => {
 
