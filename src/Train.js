@@ -19,17 +19,20 @@ export default class Train{
         // console.log(labels.dataSync())
         // Util.getImage("profile-22.jpg")
         Util.getImage("scarlett2.jpg")
-            .then(buffer => {
+            .then(imageData => {
 
-                let labels = Deeplearn.Array2D.ones([4, 4])
 
-                var imageTensor = Deeplearn.Array2D.new([4, this.imageWidth * this.imageHeight], Util.getImageNorm(buffer, this.imageWidth, this.imageHeight))
+                const labels = Deeplearn.Array4D.ones([1, 1, 1, 1])
+                const imageTensor = Deeplearn.fromPixels(imageData)
+
+                // const labels = Deeplearn.Array3D.ones([this.imageHeight, this.imageWidth, 4])
+                // const imageTensor = Deeplearn.Array3D.new([this.imageHeight, this.imageWidth, 4], Util.getImageNorm(buffer, this.imageWidth, this.imageHeight))
 
                 this.train(labels, imageTensor)
                     .then(() => {
 
 
-                        const app = new App(this.canvas)
+                        // const app = new App(this.canvas)
                         // this.test()
 
                     })
@@ -78,7 +81,7 @@ export default class Train{
 
         Util.getImage("scarlett2.jpg")
             .then(buffer => {
-                const imageTensor = Deeplearn.Array2D.new([4, this.imageWidth * this.imageHeight], Util.getImageNorm(buffer, this.imageWidth, this.imageHeight))
+                const imageTensor = Deeplearn.Array2D.new([this.imageWidth * this.imageHeight, 4], Util.getImageNorm(buffer, this.imageWidth, this.imageHeight))
                 const score = this.predict(imageTensor)
                 // console.log("true result: ", Array.from(score.dataSync()))
 

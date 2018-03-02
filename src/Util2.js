@@ -13,7 +13,7 @@ export default class Util{
                 var ctx = canvas.getContext("2d")
                 ctx.drawImage(img, 0, 0, img.width, img.height)
                 var imageData = ctx.getImageData(0, 0, img.width, img.height)
-                resolve(imageData.data)
+                resolve(imageData)
             }
             img.src = url;
         })
