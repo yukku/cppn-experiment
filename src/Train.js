@@ -22,7 +22,7 @@ export default class Train{
             .then(imageData => {
 
 
-                const labels = Deeplearn.Array4D.ones([1, 1, 1, 1])
+                const labels = Deeplearn.Array4D.ones([28, 28, 3])
                 const imageTensor = Deeplearn.fromPixels(imageData)
 
                 // const labels = Deeplearn.Array3D.ones([this.imageHeight, this.imageWidth, 4])
@@ -44,7 +44,7 @@ export default class Train{
 
     async train(labels, imageTensor) {
 
-        const TRAIN_STEPS = 100
+        const TRAIN_STEPS = 1
         const LEARNING_RATE = 0.00001
         // const optimizer = Deeplearn.train.sgd(LEARNING_RATE)
         // const optimizer = Deeplearn.train.momentum(LEARNING_RATE)
@@ -57,6 +57,7 @@ export default class Train{
         for (let i = 0; i < TRAIN_STEPS; i++) {
 
             const cost = optimizer.minimize(() => {
+
                  return Deeplearn.losses.softmaxCrossEntropy(labels, Model.model(imageTensor)).mean()
             }, true);
             console.log("cost: " + cost.dataSync())
