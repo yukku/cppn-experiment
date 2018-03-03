@@ -38,10 +38,11 @@
 
     <script>
 
-        var app = new App();
-        document.body.appendChild(app.getCanvas());
-        // document.body.appendChild(app.getCanvas2());
-
+        var trainingCanvas = document.createElement("canvas")
+        var training = new Training({
+            canvas: trainingCanvas
+        });
+        document.body.appendChild(trainingCanvas);
 
      </script>
 

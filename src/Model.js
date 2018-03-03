@@ -1,46 +1,36 @@
-// import _ from "lodash"
-import * as Deeplearn from "deeplearn"
+import * as dl from "deeplearn"
 
 const weights = [];
-const MAT_WIDTH = 20*5
-const WEIGHTS_STDEV = 0.6
+const NET_SIZE = 20*3
+const STDEV = 0.6
 const MAX_LAYERS = 6
 
-
-
-weights.push(Deeplearn.variable(Deeplearn.randomNormal(
-    [3, MAT_WIDTH], 0, WEIGHTS_STDEV)));
-for(let i=0; i < MAX_LAYERS; i++) {
-    weights.push(Deeplearn.variable(Deeplearn.randomNormal(
-        [MAT_WIDTH, MAT_WIDTH], 0, WEIGHTS_STDEV)));
+function addWeight(weights, shape, stdiv) {
+    weights.push(dl.variable(dl.randomNormal(shape, 0, STDEV)));
 }
 
-weights.push(Deeplearn.variable(Deeplearn.randomNormal(
-    [MAT_WIDTH, 3], 0, WEIGHTS_STDEV)));
+addWeight(weights, [3, NET_SIZE], STDEV)
+for(let i=0; i < MAX_LAYERS; i++) {
+    addWeight(weights, [NET_SIZE, NET_SIZE], STDEV)
+}
+addWeight(weights, [NET_SIZE, 3], STDEV)
 
 export default class Model{
 
+    static model(inputTensor) {
 
-    static model(xs) {
-
-        let lastOutput = xs
+        let prevOutput = inputTensor
         for (var i = 0; i < weights.length; i++) {
-            const matmulResult = lastOutput.matMul(weights[i])
-
+            const matmulResult = prevOutput.matMul(weights[i])
             if(i === weights.length - 1) {
-                lastOutput = matmulResult.sigmoid()
+                prevOutput = matmulResult.sigmoid()
             }else{
-                // lastOutput = matmulResult.relu()
-                lastOutput = matmulResult.tanh()
+                // prevOutput = matmulResult.relu()
+                prevOutput = matmulResult.tanh()
             }
-
-            // lastOutput = matmulResult.tanh()
-            // lastOutput = matmulResult
         }
-        return lastOutput
+        return prevOutput
     }
-
-
 
     static getWeight() {
         return weights
