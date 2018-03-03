@@ -1,15 +1,19 @@
 import * as dl from "deeplearn"
 
 const weights = [];
-const NET_SIZE = 20*3
-const STDEV = 0.6
-const MAX_LAYERS = 6
+// const NET_SIZE = 28*2
+// const STDEV = 0.5
+// const MAX_LAYERS = 8
+
+const NET_SIZE = 28*3
+const STDEV = 0.5
+const MAX_LAYERS = 8
 
 function addWeight(weights, shape, stdiv) {
     weights.push(dl.variable(dl.randomNormal(shape, 0, STDEV)));
 }
 
-addWeight(weights, [3, NET_SIZE], STDEV)
+addWeight(weights, [5, NET_SIZE], STDEV)
 for(let i=0; i < MAX_LAYERS; i++) {
     addWeight(weights, [NET_SIZE, NET_SIZE], STDEV)
 }

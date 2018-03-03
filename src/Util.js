@@ -47,11 +47,15 @@ export default class Util{
             let [height, width, depth] = tensor.shape
             depth = (depth) ? depth : 1
             const imageData = new ImageData(width, height)
-            canvas.style.width = canvas.width * scale + "px"
-            canvas.style.height = canvas.height * scale + "px"
 
             tensor.data()
                 .then(data => {
+
+                    canvas.width = width
+                    canvas.height = height
+                    canvas.style.width = canvas.width * scale + "px"
+                    canvas.style.height = canvas.height * scale + "px"
+
                     for (let d = 0; d < depth; d++) {
                         for (let i = 0; i < width * height; i++) {
                             imageData.data[i + d * width * height]= Math.round(255 * data[i + d * width * height])

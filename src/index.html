@@ -19,16 +19,9 @@
         body{
             margin: 0px;
             padding:0;
-            /*background: hsla(225, 42.7%, 20.0%, 1.0);*/
-            background: #1e1e1e;
-            width: 100%;
-            height: 100%;
+
         }
-        canvas{
-            /*transform: rotate(180deg);*/
-           /* width: 300px;
-            height: 300px;*/
-        }
+
     </style>
 
 </head>
@@ -38,7 +31,8 @@
 
     <script>
 
-        var trainingCanvas = document.createElement("canvas")
+        var trainingCanvas = document.createElement("canvas");
+
         var training = new Training({
             canvas: trainingCanvas
         });
