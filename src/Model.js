@@ -6,12 +6,12 @@ const weights = [];
 // const MAX_LAYERS = 8
 
 // const NET_SIZE = 60
-const NET_SIZE = 80
+const NET_SIZE = 28*3
 const STDEV = 0.6
-const MAX_LAYERS = 6
+const MAX_LAYERS = 8
 
 function addWeight(weights, shape, stdiv) {
-    weights.push(dl.variable(dl.randomNormal(shape, 0, STDEV)));
+    weights.push(dl.variable(dl.truncatedNormal(shape, 0, STDEV)));
 }
 
 addWeight(weights, [5, NET_SIZE], STDEV)

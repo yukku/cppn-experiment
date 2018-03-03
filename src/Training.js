@@ -8,7 +8,7 @@ export default class Training{
     constructor({ canvas, canvas2 }) {
 
         this.TRAIN_STEPS = 1000
-        this.LEARNING_RATE = 0.003
+        this.LEARNING_RATE = 0.0001
         // this.LEARNING_RATE = 0.005
 
         this.canvas = canvas
@@ -26,13 +26,13 @@ export default class Training{
         const [trainingTensor, coordTensor, height, width] = await this.load()
         await this.train(coordTensor, trainingTensor, height, width)
 
-        // this.animate(height, width)
+        this.animate(height, width)
     }
 
     async animate(height, width) {
         this.z1Counter += 0.005
         this.z2Counter += 0.005
-        const scale = 1
+        const scale = 4
         const coordTensor = Util.createCoordTensor(height*scale, width*scale, 3)
 
         const zVars = this.getZvars(this.z1Counter, this.z2Counter, [coordTensor.shape[0], 1])
@@ -43,11 +43,11 @@ export default class Training{
             .reshape([ height*scale, width*scale, 4 ])
 
 
-        await Util.renderToCanvas(tensor, this.canvas, 4)
+        await Util.renderToCanvas(tensor, this.canvas, 2)
 
-        setTimeout(() => {
-            requestAnimationFrame(() => this.animate(height, width));
-        }, 40);
+        // setTimeout(() => {
+        //     requestAnimationFrame(() => this.animate(height, width));
+        // }, 40);
 
 
     }
@@ -72,11 +72,11 @@ export default class Training{
 
     async train(labelTensor, trainingTensor, height, width) {
 
-        this.webcam.start()
-        const optimizer = dl.train.sgd(this.LEARNING_RATE)
+        // this.webcam.start()
+        // const optimizer = dl.train.sgd(this.LEARNING_RATE)
         // const optimizer = dl.train.momentum(this.LEARNING_RATE)
         // const optimizer = dl.train.adadelta(this.LEARNING_RATE)
-        // const optimizer = dl.train.adam(this.LEARNING_RATE)
+        const optimizer = dl.train.adam(this.LEARNING_RATE)
         // const optimizer = dl.train.adam()
         // const optimizer = dl.train.adamax(this.LEARNING_RATE)
         // const optimizer = dl.train.adamax()
@@ -89,20 +89,22 @@ export default class Training{
 
             const cost = optimizer.minimize(() => {
 
-                const trainingWebcamTensor = dl.fromPixels(this.webcam.getImageData())
-                                    .toFloat()
-                                    .div(dl.scalar(255))
-                                    .reshape([height*width, 3])
+                // const trainingWebcamTensor = dl.fromPixels(this.webcam.getImageData())
+                //                     .toFloat()
+                //                     .div(dl.scalar(255))
+                //                     .reshape([height*width, 3])
 
 
 
                 // this.z1Counter += 0.01
                 // this.z2Counter += 0.01
+
                 const zVars = this.getZvars(this.z1Counter, this.z2Counter, [labelTensor.shape[0], 1])
                 const resultTensor = Model.model(labelTensor.concat(zVars, 1))
                 result = resultTensor.dataSync()
 
-                return dl.losses.softmaxCrossEntropy(trainingWebcamTensor, resultTensor).mean()
+                // return dl.losses.softmaxCrossEntropy(trainingWebcamTensor, resultTensor).mean()
+                return dl.losses.softmaxCrossEntropy(trainingTensor, resultTensor).mean()
             }, true);
 
 
