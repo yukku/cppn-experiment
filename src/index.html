@@ -32,11 +32,13 @@
     <script>
 
         var trainingCanvas = document.createElement("canvas");
-
+        var previewCanvas = document.createElement("canvas");
         var training = new Training({
-            canvas: trainingCanvas
+            canvas: trainingCanvas,
+            canvas2: previewCanvas
         });
         document.body.appendChild(trainingCanvas);
+        document.body.appendChild(previewCanvas);
 
      </script>
 
