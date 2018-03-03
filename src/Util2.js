@@ -34,13 +34,17 @@ export default class Util{
         return Deeplearn.Array2D.new([width * height, inputDimensionsNumber], coords)
     }
 
+
+
     static normalizeCoord(x, y, width, height) {
         const halfWidth = width * 0.5;
         const halfHeight = height * 0.5;
+        // const normX = x / width;
         const normX = (x - halfWidth) / width;
+        // const normY = y / height;
         const normY = (y - halfHeight) / height;
         const r = Math.sqrt(normX * normX + normY * normY);
-        return [normX, normY, r] ;
+        return [normX, normY, 1, 1] ;
         // return [normX, normY, r] ;
     }
 

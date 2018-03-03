@@ -7,12 +7,12 @@ export default class App{
 
     constructor(canvas) {
 
-        this.INPUT_DIMENSIONS_NUMBER = 2  // x, y, r
+        this.INPUT_DIMENSIONS_NUMBER = 3  // x, y, r
 
 
         this.canvas = canvas || document.createElement("canvas")
 
-        const canvasSize = 500
+        const canvasSize = 400
         this.canvas.width = canvasSize
         this.canvas.height = canvasSize
         // this.canvas.style.width = canvasSize*4 + "px"
@@ -28,7 +28,6 @@ export default class App{
 
 
         this.input = Util.createInput({
-            buffer: this.buffer,
             width: this.canvas.width,
             height: this.canvas.height,
             inputDimensionsNumber: this.INPUT_DIMENSIONS_NUMBER
@@ -51,35 +50,44 @@ export default class App{
         // this.z1Counter += 0.01
         // this.z2Counter += 0.01
 
-        const lastOutput = Deeplearn.tidy(() => {
+        let lastOutput = Deeplearn.tidy(() => {
 
-            var z1 = Deeplearn.Scalar.new(Math.sin(this.z1Counter));
-            var z2 = Deeplearn.Scalar.new(Math.cos(this.z2Counter));
+            // var z1 = Deeplearn.Scalar.new(Math.sin(this.z1Counter));
+            // var z2 = Deeplearn.Scalar.new(Math.cos(this.z2Counter));
 
-            this.ones = Deeplearn.Array2D.ones([this.input.shape[0], 1]);
+            // this.ones = Deeplearn.Array2D.ones([this.input.shape[0], ]);
 
 
-            var z1Mat = z1.mul(this.ones);
-            var z2Mat = z2.mul(this.ones);
-            var concatAxis = 1;
-            var latentVars = z1Mat.concat(z2Mat, 1);
-            var lastOutput = this.input.concat(latentVars, 1);
+            // var z1Mat = z1.mul(this.ones);
+            // var z2Mat = z2.mul(this.ones);
+            // var concatAxis = 1;
+            // var latentVars = z1Mat.concat(z2Mat, 1);
+            // var lastOutput = this.input.concat(latentVars, 1);
+            var lastOutput = Model.model(this.input);
+            // var lastOutput = this.input;
+            // // console.log(lastOutput)
+            //  for (var i = this.weights.length - 1; i >= 0; i--) {
+            //     const matmulResult = lastOutput.matMul(this.weights[i].transpose());
+            //     // console.log(matmulResult)
+            //     if(i === 0) {
+            //         lastOutput = matmulResult.sigmoid()
+            //     }else{
+            //         // lastOutput = matmulResult.relu()
+            //         lastOutput = matmulResult.tanh()
+            //     }
+            // }
 
-             for (var i = 0; i < this.weights.length; i++) {
+            //  for (var i = this.weights.length - 1; i >= 0; i--) {
 
-                const matmulResult = lastOutput.matMul(this.weights[i]);
-                // console.log(matmulResult)
-                if(i === this.weights.length - 1) {
-                    lastOutput = matmulResult.sigmoid()
-                }else if(i%2){
-                    // lastOutput = matmulResult.relu()
-                    // lastOutput = matmulResult.relu()
-                    lastOutput = matmulResult.tanh()
-                }else{
-                    lastOutput = matmulResult.tanh()
-                    // lastOutput = matmulResult.selu()
-                }
-            }
+            //     const matmulResult = lastOutput.matMul(this.weights[i].transpose());
+            //     // console.log(matmulResult)
+            //     if(i === 0) {
+            //         lastOutput = matmulResult.sigmoid()
+            //     }else{
+            //         // lastOutput = matmulResult.relu()
+            //         lastOutput = matmulResult.tanh()
+            //     }
+            // }
 
 
             return lastOutput
@@ -87,11 +95,18 @@ export default class App{
 
         });
 
+
+
+        const alpha = Deeplearn.Array2D.ones([this.canvas.height*this.canvas.width, 1])
+        lastOutput = lastOutput.concat(alpha, 1)
+
         let reshaped = lastOutput.reshape([
             this.canvas.height ,
             this.canvas.width  ,
             4
         ])
+
+        //
         // console.log(reshaped.dataSync())
         Util.renderToCanvas(reshaped, this.canvas, 1)
             .then((imageData) => {
