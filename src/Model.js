@@ -11,7 +11,7 @@ const STDEV = 0.6
 const MAX_LAYERS = 8
 
 function addWeight(weights, shape, stdiv) {
-    weights.push(dl.variable(dl.truncatedNormal(shape, 0, STDEV)));
+    weights.push(dl.variable(dl.randomNormal(shape, 0, STDEV)));
 }
 
 addWeight(weights, [5, NET_SIZE], STDEV)
@@ -37,8 +37,10 @@ export default class Model{
         return prevOutput
     }
 
-    static getWeight() {
-        return weights
+    static getWeightAsJson() {
+        return JSON.stringify(weights.map(weight => {
+            return weight.dataSync()
+        }))
     }
 
 }

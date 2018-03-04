@@ -9,7 +9,7 @@ export default class Training{
     constructor({ canvas, canvas2 }) {
 
         this.TRAIN_STEPS = 400
-        this.LEARNING_RATE = 0.0001
+        this.LEARNING_RATE = 0.002
         // this.LEARNING_RATE = 0.005
 
         this.canvas = canvas
@@ -19,7 +19,9 @@ export default class Training{
         this.z1Counter = 0
         this.z2Counter = 0
 
-        this.start()
+        this.costStack = []
+
+        // this.start()
     }
 
     async start() {
@@ -79,8 +81,8 @@ export default class Training{
         // const optimizer = dl.train.adadelta(this.LEARNING_RATE)
         // const optimizer = dl.train.adam(this.LEARNING_RATE)
         // const optimizer = dl.train.adam()
-        // const optimizer = dl.train.adamax(this.LEARNING_RATE)
-        const optimizer = dl.train.adamax()
+        const optimizer = dl.train.adamax(this.LEARNING_RATE)
+        // const optimizer = dl.train.adamax()
         // const optimizer = dl.train.rmsprop(this.LEARNING_RATE)
         // const optimizer = dl.train.adagrad(this.LEARNING_RATE)
 
@@ -100,12 +102,13 @@ export default class Training{
                 // this.z1Counter += 0.01
                 // this.z2Counter += 0.01
 
+
                 const zVars = this.getZvars(this.z1Counter, this.z2Counter, [labelTensor.shape[0], 1])
                 const resultTensor = Model.model(labelTensor.concat(zVars, 1))
                 result = resultTensor.dataSync()
 
                 return dl.losses.softmaxCrossEntropy(trainingWebcamTensor, resultTensor).mean()
-                // return dl.losses.softmaxCrossEntropy(trainingTensor, resultTensor).mean()
+
             }, true);
 
 
@@ -116,13 +119,29 @@ export default class Training{
             await Util.renderToCanvas(tensor, this.canvas, 8)
 
             if(i%10 == 0){
-                console.log("steps: " + i, "cost: " + cost.dataSync())
+                const costData = cost.dataSync()
+                console.log("steps: " + i, "cost: " + costData)
             }
 
             await dl.nextFrame()
         }
 
         return [height, width]
+    }
+
+    addToCostStack(costData) {
+        this.costStack.push(costData[0])
+        if(this.costStack.length > 2) this.costStack.shift()
+    }
+
+    costHasIncreased() {
+
+        const threshold = 0.01
+        if(this.costStack.length >= 2){
+            return (this.costStack[0] + threshold < this.costStack[this.costStack.length - 1])
+        }else{
+            return false
+        }
     }
 
     getZvars(z1Counter, z2Counter, shape, axis = 1) {
@@ -132,6 +151,14 @@ export default class Training{
         const z1Mat = z1.mul(ones);
         const z2Mat = z2.mul(ones);
         return z1Mat.concat(z2Mat, axis);
+    }
+
+    getWeightAsJson() {
+        return Model.getWeightAsJson()
+    }
+
+    downloadModel() {
+        Util.downloadJson(Model.getWeightAsJson())
     }
 
 }

@@ -68,4 +68,15 @@ export default class Util{
 
     }
 
+    static downloadJson(json) {
+        var data = "text/json;charset=utf-8," + encodeURIComponent(json);
+        var a = document.createElement('a');
+        a.href = 'data:' + data;
+        a.download = 'cppn-experiment-checkpoint.json';
+        a.innerHTML = 'download JSON';
+        a.click()
+        // var container = document.getElementById('download_json_container');
+        // container.appendChild(a);
+    }
+
 }
