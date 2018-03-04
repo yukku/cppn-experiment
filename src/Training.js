@@ -1,4 +1,5 @@
 import * as dl from "deeplearn"
+
 import Util from "./Util.js"
 import Model from "./Model.js"
 import Webcam from "./Webcam.js"
@@ -7,7 +8,7 @@ export default class Training{
 
     constructor({ canvas, canvas2 }) {
 
-        this.TRAIN_STEPS = 1000
+        this.TRAIN_STEPS = 400
         this.LEARNING_RATE = 0.0001
         // this.LEARNING_RATE = 0.005
 
@@ -72,14 +73,14 @@ export default class Training{
 
     async train(labelTensor, trainingTensor, height, width) {
 
-        // this.webcam.start()
+        this.webcam.start()
         // const optimizer = dl.train.sgd(this.LEARNING_RATE)
         // const optimizer = dl.train.momentum(this.LEARNING_RATE)
         // const optimizer = dl.train.adadelta(this.LEARNING_RATE)
-        const optimizer = dl.train.adam(this.LEARNING_RATE)
+        // const optimizer = dl.train.adam(this.LEARNING_RATE)
         // const optimizer = dl.train.adam()
         // const optimizer = dl.train.adamax(this.LEARNING_RATE)
-        // const optimizer = dl.train.adamax()
+        const optimizer = dl.train.adamax()
         // const optimizer = dl.train.rmsprop(this.LEARNING_RATE)
         // const optimizer = dl.train.adagrad(this.LEARNING_RATE)
 
@@ -89,10 +90,10 @@ export default class Training{
 
             const cost = optimizer.minimize(() => {
 
-                // const trainingWebcamTensor = dl.fromPixels(this.webcam.getImageData())
-                //                     .toFloat()
-                //                     .div(dl.scalar(255))
-                //                     .reshape([height*width, 3])
+                const trainingWebcamTensor = dl.fromPixels(this.webcam.getImageData())
+                                    .toFloat()
+                                    .div(dl.scalar(255))
+                                    .reshape([height*width, 3])
 
 
 
@@ -103,8 +104,8 @@ export default class Training{
                 const resultTensor = Model.model(labelTensor.concat(zVars, 1))
                 result = resultTensor.dataSync()
 
-                // return dl.losses.softmaxCrossEntropy(trainingWebcamTensor, resultTensor).mean()
-                return dl.losses.softmaxCrossEntropy(trainingTensor, resultTensor).mean()
+                return dl.losses.softmaxCrossEntropy(trainingWebcamTensor, resultTensor).mean()
+                // return dl.losses.softmaxCrossEntropy(trainingTensor, resultTensor).mean()
             }, true);
 
 
@@ -112,7 +113,7 @@ export default class Training{
                 .concat(dl.Array2D.ones([height * width, 1]), 1)
                 .reshape([ height, width, 4 ])
 
-            await Util.renderToCanvas(tensor, this.canvas, 4)
+            await Util.renderToCanvas(tensor, this.canvas, 8)
 
             if(i%10 == 0){
                 console.log("steps: " + i, "cost: " + cost.dataSync())
