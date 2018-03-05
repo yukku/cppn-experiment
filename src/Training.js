@@ -8,7 +8,7 @@ export default class Training{
 
     constructor({ canvas, canvas2 }) {
 
-        this.TRAIN_STEPS = 400
+        this.TRAIN_STEPS = 300
         this.LEARNING_RATE = 0.002
         // this.LEARNING_RATE = 0.005
 
@@ -21,7 +21,7 @@ export default class Training{
 
         this.costStack = []
 
-        // this.start()
+        this.start()
     }
 
     async start() {
@@ -33,9 +33,9 @@ export default class Training{
     }
 
     async animate(height, width) {
-        this.z1Counter += 0.005
-        this.z2Counter += 0.005
-        const scale = 4
+        // this.z1Counter += 0.005
+        // this.z2Counter += 0.005
+        const scale = 8
         const coordTensor = Util.createCoordTensor(height*scale, width*scale, 3)
 
         const zVars = this.getZvars(this.z1Counter, this.z2Counter, [coordTensor.shape[0], 1])
@@ -59,12 +59,17 @@ export default class Training{
         // const imageData = await Util.getImage("scarlett2.jpg")
         // const imageData = await Util.getImage("profile-22.jpg")
         const imageData = await Util.getImage("scarlett.jpg")
-        const height = imageData.height
-        const width = imageData.width
-        const trainingTensor = dl.fromPixels(imageData)
-                            .toFloat()
-                            .div(dl.scalar(255))
-                            .reshape([height*width, 3])
+        // const height = imageData.height
+        // const width = imageData.width
+
+        const height = 60
+        const width = 100
+
+        const trainingTensor = ""
+        // const trainingTensor = dl.fromPixels(imageData)
+        //                     .toFloat()
+        //                     .div(dl.scalar(255))
+        //                     .reshape([height*width, 3])
 
         const coordTensor = Util.createCoordTensor(height, width, 3)
 
@@ -116,7 +121,7 @@ export default class Training{
                 .concat(dl.Array2D.ones([height * width, 1]), 1)
                 .reshape([ height, width, 4 ])
 
-            await Util.renderToCanvas(tensor, this.canvas, 8)
+            await Util.renderToCanvas(tensor, this.canvas, 4)
 
             if(i%10 == 0){
                 const costData = cost.dataSync()
