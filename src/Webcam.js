@@ -5,8 +5,8 @@ export default class Webcam{
     constructor({ canvas } = {}) {
         this.videoEl = document.createElement('video')
         this.canvas =  (!canvas) ? document.createElement("canvas") : canvas
-        this.canvas.width = 100
-        this.canvas.height = 60
+        this.canvas.width = 120
+        this.canvas.height = 80
         this.context = this.canvas.getContext('2d')
     }
 

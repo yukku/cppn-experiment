@@ -62,8 +62,8 @@ export default class Training{
         // const height = imageData.height
         // const width = imageData.width
 
-        const height = 60
-        const width = 100
+        const height = 80
+        const width = 120
 
         const trainingTensor = ""
         // const trainingTensor = dl.fromPixels(imageData)
