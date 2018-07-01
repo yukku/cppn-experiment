@@ -1,4 +1,5 @@
 .ideas
+package-lock.json
 dist/app
 dist/shader_precompiled
 dist/packs
