@@ -59,7 +59,7 @@ export default class Train {
   }
 
   async train(labels, imageTensor) {
-    const TRAIN_STEPS = 1000;
+    const TRAIN_STEPS = 100;
     const LEARNING_RATE = 0.0000000001;
     const optimizer = Deeplearn.train.sgd(LEARNING_RATE);
     // const optimizer = Deeplearn.train.momentum(LEARNING_RATE)
